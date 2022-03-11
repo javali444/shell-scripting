@@ -1,4 +1,2 @@
-frontend:
-    bash components/frontend.sh
-cart:
-    bash components/cart.sh
+frontend:bash components/frontend.sh
+cart:bash components/cart.sh
