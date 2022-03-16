@@ -28,7 +28,7 @@ Status_Check $?
 
 
 Print "Extracting Schema"
-cd /tmp &>>$LOG_FILE && unzip mongodb.zip &>>$LOG_FILE
+cd /tmp &>>$LOG_FILE && unzip -o mongodb.zip &>>$LOG_FILE
 Status_Check $?
 
 
