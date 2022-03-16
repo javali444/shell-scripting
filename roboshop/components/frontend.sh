@@ -21,7 +21,7 @@ Status_Check(){
 #function to print the message comment
 Print()
 {
-  echo "\n---------------$1---------------\n" >>$LOG_FILE
+  echo -e "\n---------------$1---------------\n" >>$LOG_FILE
   echo -e "\e[35m$1\e[0m"
 }
 
