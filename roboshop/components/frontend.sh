@@ -4,7 +4,7 @@ echo "Installing Nginx"
 yum install nginx -y
 
 echo "Downloading Nginx"
-curl -f -s -L -o /tmp/frontend.zip "https://github.com/roboshop-devops-project/frontend/archive/main.zip"
+curl -f -s -L -o /tmp/frontend.zip "https://github.com/roboshop-devops-project/frontend/archive/main.zi"
 
 
 echo "Old files clean up"
