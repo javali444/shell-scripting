@@ -38,3 +38,12 @@ Status_Check $?
 Print "Applying permissions to Application user"
 chown -R $APP_USER:$APP_USER /home/$APP_USER
 Status_Check $?
+
+Print "Configure SystemD file with correct IP addresses"
+sed -i -e 's/MONGO_DNSNAME/mongodb.roboshop.internal/' /home/roboshop/catalogue/systemd.service &>>$LOG_FILE && mv /home/roboshop/catalogue/systemd.service /etc/systemd/system/catalogue.service
+Status_Check $?
+
+
+Print "Restart Catalogue service"
+systemctl daemon-reload &>>$LOG_FILE && systemctl restart catalogue &>>$LOG_FILE && systemctl enable catalogue &>>$LOG_FILE
+Status_Check $?
