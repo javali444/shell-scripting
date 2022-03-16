@@ -11,7 +11,7 @@ yum install nodejs gcc-c++ -y &>>LOG_FILE
 Status_Check $?
 
 Print "Adding Application user"
-useradd $APP_USER &>>LOG_FILE
+useradd ${APP_USER} &>>LOG_FILE
 Status_Check $?
 
 Print "Downloading Catalogue content"
@@ -19,14 +19,14 @@ curl -s -L -o /tmp/catalogue.zip "https://github.com/roboshop-devops-project/cat
 Status_Check $?
 
 Print "Clean up old contents"
-rm -rf /home/roboshop/catalogue &>>LOG_FILE
+rm -rf /home/{APP_USER}/catalogue &>>LOG_FILE
 Status_Check $?
 
 Print "Unzipping the files"
-cd /home/roboshop &>>LOG_FILE && unzip /tmp/catalogue.zip &>>LOG_FILE && mv catalogue-main catalogue &>>LOG_FILE
+cd /home/{APP_USER} &>>LOG_FILE && unzip /tmp/catalogue.zip &>>LOG_FILE && mv catalogue-main catalogue &>>LOG_FILE
 Status_Check $?
 
 
 Print "Installing Dependencies"
-cd /home/roboshop/catalogue &>>LOG_FILE && npm install &>>LOG_FILE
+cd /home/{APP_USER}/catalogue &>>LOG_FILE && npm install &>>LOG_FILE
 Status_Check $?
