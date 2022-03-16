@@ -38,14 +38,10 @@ Status_Check $?
 Print "Old files clean up"
 rm -rf /usr/share/nginx/html/*
 Status_Check $?
-
+cd /usr/share/nginx/html
 
 Print "Unzipping content"
-cd /usr/share/nginx/html
-unzip /tmp/frontend.zip
-mv frontend-main/* .
-mv static/* .
-rm -rf frontend-main README.md
+unzip /tmp/frontend.zip && mv frontend-main/* . && mv static/* . && rm -rf frontend-main README.md
 Status_Check $?
 
 
@@ -55,9 +51,5 @@ Status_Check $?
 
 
 Print "Starting Nginx"
-systemctl restart nginx
-Status_Check $?
-
-
-systemctl enable nginx
+systemctl restart nginx && systemctl enable nginx
 Status_Check $?
