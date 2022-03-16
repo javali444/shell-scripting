@@ -47,7 +47,7 @@ NodeJS(){
   fi
 
 
-  Print "Downloading User component content"
+  Print "Downloading ${COMPONENT} component content"
   curl -s -L -o /tmp/${COMPONENT}.zip "https://github.com/roboshop-devops-project/${COMPONENT}/archive/main.zip" &>>$LOG_FILE
   Status_Check $?
 
@@ -73,7 +73,7 @@ NodeJS(){
   Status_Check $?
 
 
-  Print "Restart User service"
+  Print "Restart ${COMPONENT} service"
   systemctl daemon-reload &>>$LOG_FILE && systemctl restart ${COMPONENT} &>>$LOG_FILE && systemctl enable ${COMPONENT} &>>$LOG_FILE
   Status_Check $?
 
