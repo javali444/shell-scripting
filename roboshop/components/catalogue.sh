@@ -10,8 +10,11 @@ Print "Install Node Js"
 yum install nodejs gcc-c++ -y &>>$LOG_FILE
 Status_Check $?
 
-Print "Adding Application user"
-useradd ${APP_USER} &>>$LOG_FILE
+id $APP_USER &>>$LOG_FILE
+if [ $? -ne 0 ]; then
+  Print "Adding Application user"
+  useradd ${APP_USER} &>>$LOG_FILE
+fi
 Status_Check $?
 
 Print "Downloading Catalogue content"
