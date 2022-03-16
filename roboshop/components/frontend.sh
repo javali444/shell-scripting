@@ -18,24 +18,29 @@ Status_Check(){
   fi
 }
 
+#function to print the message comment
+Print()
+{
+  echo -e "\e[35m$1\e[0m"
+}
 
-echo "Installing Nginx"
+Print "Installing Nginx"
 yum install nginx -y
 Status_Check $?
 
 
 
-echo "Downloading Nginx"
+Print "Downloading Nginx"
 curl -f -s -L -o /tmp/frontend.zip "https://github.com/roboshop-devops-project/frontend/archive/main.zip"
 Status_Check $?
 
 
-echo "Old files clean up"
+Print "Old files clean up"
 rm -rf /usr/share/nginx/html/*
 Status_Check $?
 
 
-echo "Unzipping content"
+Print "Unzipping content"
 cd /usr/share/nginx/html
 unzip /tmp/frontend.zip
 mv frontend-main/* .
@@ -44,12 +49,12 @@ rm -rf frontend-main README.md
 Status_Check $?
 
 
-echo "Configuration set up"
+Print "Configuration set up"
 mv localhost.conf /etc/nginx/default.d/roboshop.conf
 Status_Check $?
 
 
-echo "Starting Nginx"
+Print "Starting Nginx"
 systemctl restart nginx
 Status_Check $?
 
