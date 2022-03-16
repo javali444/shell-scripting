@@ -14,8 +14,9 @@ id $APP_USER &>>$LOG_FILE
 if [ $? -ne 0 ]; then
   Print "Adding Application user"
   useradd ${APP_USER} &>>$LOG_FILE
+  Status_Check $?
 fi
-Status_Check $?
+
 
 Print "Downloading Catalogue content"
 curl -s -L -o /tmp/catalogue.zip "https://github.com/roboshop-devops-project/catalogue/archive/main.zip" &>>$LOG_FILE
@@ -32,4 +33,8 @@ Status_Check $?
 
 Print "Installing Dependencies"
 cd /home/${APP_USER}/catalogue &>>$LOG_FILE && npm install &>>$LOG_FILE
+Status_Check $?
+
+Print "Applying permissions to Application user"
+chown -R $APP_USER:$APP_USER /home/$APP_USER
 Status_Check $?
