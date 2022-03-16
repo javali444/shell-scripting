@@ -61,7 +61,7 @@ NodeJS(){
 
 
   Print "Installing Dependencies"
-  cd /home/${APP_USER}/user &>>$LOG_FILE && npm install &>>$LOG_FILE
+  cd /home/${APP_USER}/${COMPONENT} &>>$LOG_FILE && npm install &>>$LOG_FILE
   Status_Check $?
 
   Print "Applying permissions to Application user"
