@@ -1,10 +1,18 @@
 #!/bin/bash
 
+user_id=$(id -u)
+if [ "$user_id" -ne 0 ]
+then
+  echo "You should be a root user to run the script"
+  exit 1
+fi
+
+
 echo "Installing Nginx"
 yum install nginx -y
 
 echo "Downloading Nginx"
-curl -f -s -L -o /tmp/frontend.zip "https://github.com/roboshop-devops-project/frontend/archive/main.zi"
+curl -f -s -L -o /tmp/frontend.zip "https://github.com/roboshop-devops-project/frontend/archive/main.zip"
 
 
 echo "Old files clean up"
