@@ -8,10 +8,10 @@ curl -f -s -L -o /tmp/frontend.zip "https://github.com/roboshop-devops-project/f
 
 
 echo "Old files clean up"
-cd /usr/share/nginx/html
-rm -rf *
+rm -rf /usr/share/nginx/html/*
 
 echo "Unzipping content"
+cd /usr/share/nginx/html
 unzip /tmp/frontend.zip
 mv frontend-main/* .
 mv static/* .
@@ -21,5 +21,5 @@ echo "Configuration set up"
 mv localhost.conf /etc/nginx/default.d/roboshop.conf
 
 echo "Starting Nginx"
+systemctl restart nginx
 systemctl enable nginx
-systemctl start nginx
