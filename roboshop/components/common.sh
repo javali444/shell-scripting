@@ -47,7 +47,7 @@ NodeJS(){
   fi
 
 
-  Print "Downloading Catalogue content"
+  Print "Downloading User component content"
   curl -s -L -o /tmp/${COMPONENT}.zip "https://github.com/roboshop-devops-project/${COMPONENT}/archive/main.zip" &>>$LOG_FILE
   Status_Check $?
 
@@ -73,8 +73,8 @@ NodeJS(){
   Status_Check $?
 
 
-  Print "Restart Catalogue service"
-  systemctl daemon-reload &>>$LOG_FILE && systemctl restart catalogue &>>$LOG_FILE && systemctl enable catalogue &>>$LOG_FILE
+  Print "Restart User service"
+  systemctl daemon-reload &>>$LOG_FILE && systemctl restart ${COMPONENT} &>>$LOG_FILE && systemctl enable ${COMPONENT} &>>$LOG_FILE
   Status_Check $?
 
 }
