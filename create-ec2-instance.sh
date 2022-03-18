@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ -z "$1" ]; then
-    echo "Input machine name"
+    echo -e "\e[31mInput machine name\e[0m"
     exit 1
 fi
 
