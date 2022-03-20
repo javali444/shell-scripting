@@ -1,3 +1,0 @@
-Hello
-Commiting the file using gitbash
-Adding one more line
