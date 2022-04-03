@@ -17,7 +17,7 @@ Status_Check $?
 
 
 Print "Change default password"
-echo "SET PASSWORD FOR 'root'@'localhost' = PASSWORD('RoboShop@1');" >/tmp/password.txt
 DEFAULT_PASSWORD= $(grep "temporary password" /var/log/mysqld.log | awk '{print $NF}')
-mysql --connect-expired-password -uroot -pRoboShop@1 </tmp/pass-validate.sql  &>>${LOG_FILE}
+echo "SET PASSWORD FOR 'root'@'localhost' = PASSWORD('RoboShop@1');" >/tmp/password.txt
+mysql --connect-expired-password -uroot -p"${DEFAULT_ROOT_PASSWORD}" </tmp/password.txt &>>${LOG_FILE}
 Status_Check $?
