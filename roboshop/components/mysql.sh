@@ -14,3 +14,10 @@ Status_Check $?
 Print "Enable and restart MySQL"
 systemctl enable mysqld &>>$LOG_FILE && systemctl start mysqld &>>$LOG_FILE
 Status_Check $?
+
+
+Print "Change default password"
+echo "SET PASSWORD FOR 'root'@'localhost' = PASSWORD('RoboShop@1');" >/tmp/password.txt
+DEFAULT_PASSWORD= $(grep "temporary password" /var/log/mysqld.log | awk '{print $NF}')
+mysql --connect-expired-password -uroot -pRoboShop@1 </tmp/pass-validate.sql  &>>${LOG_FILE}
+Status_Check $?
