@@ -24,3 +24,20 @@ if [ 0 -ne $? ]; then
   mysql --connect-expired-password -uroot -p"${DEFAULT_ROOT_PASSWORD}" </tmp/rootpass.sql &>>${LOG_FILE}
   Status_Check $?
 fi
+
+echo show plugins | mysql -uroot -pRoboShop@1 2>>${LOG_FILE} | grep validate_password &>>${LOG_FILE}
+if [ $? -eq 0 ]; then
+  Print "Uninstall Password Validate Plugin"
+  echo 'uninstall plugin validate_password;' >/tmp/pass-validate.sql
+  mysql --connect-expired-password -uroot -pRoboShop@1 </tmp/pass-validate.sql  &>>${LOG_FILE}
+  StatCheck $?
+fi
+
+
+Print "Download Schema"
+curl -s -L -o /tmp/mysql.zip "https://github.com/roboshop-devops-project/mysql/archive/main.zip" &>>$LOG_FILE
+Status_Check $?
+
+Print "Load Schema"
+cd /tmp &>>$LOG_FILE && unzip mysql.zip &>>$LOG_FILE && cd mysql-main &>>$LOG_FILE && mysql -u root -pRoboShop@1 <shipping.sql &>>$LOG_FILE
+Status_Check $?
