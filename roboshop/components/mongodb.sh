@@ -33,7 +33,12 @@ Status_Check $?
 
 
 Print "Load Schema"
-cd mongodb-main &>>$LOG_FILE && mongo < catalogue.js &>>$LOG_FILE && mongo < users.js &>>$LOG_FILE
-Status_Check $?
+cd mongodb-main &>>$LOG_FILE
+for schema_value in catalogue users; do
+  Print "Loading ${schema_value}"
+  mongo < ${schema_value}.js &>>$LOG_FILE
+  Status_Check $?
+done
+
 
 
