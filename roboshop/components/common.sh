@@ -30,20 +30,17 @@ rm -f $LOG_FILE
 
 APP_USER=roboshop
 
-Create_Application_User(){
-  id $APP_USER &>>$LOG_FILE
-    if [ $? -ne 0 ]; then
-      Print "Adding Application user"
-      useradd ${APP_USER} &>>$LOG_FILE
-      Status_Check $?
-    fi
-
-}
 
 APP_SETUP(){
+
+  id $APP_USER &>>$LOG_FILE
+      if [ $? -ne 0 ]; then
+        Print "Adding Application user"
+        useradd ${APP_USER} &>>$LOG_FILE
+        Status_Check $?
+      fi
+
   Print "Downloading ${COMPONENT} component content"
-    cd /home/${APP_USER} &>>$LOG_FILE
-    Status_Check $?
     curl -s -L -o /tmp/${COMPONENT}.zip "https://github.com/roboshop-devops-project/${COMPONENT}/archive/main.zip" &>>$LOG_FILE
     Status_Check $?
 
@@ -52,12 +49,16 @@ APP_SETUP(){
     Status_Check $?
 
     Print "Unzipping the files"
-    unzip -o /tmp/${COMPONENT}.zip &>>$LOG_FILE && mv ${COMPONENT}-main ${COMPONENT} &>>$LOG_FILE
+    cd /home/${APP_USER} &>>$LOG_FILE && unzip -o /tmp/${COMPONENT}.zip &>>$LOG_FILE && mv ${COMPONENT}-main ${COMPONENT} &>>$LOG_FILE
     Status_Check $?
 }
 
 Setup_SystemD_file()
 {
+  Print "Applying permissions to Application user"
+    chown -R $APP_USER:$APP_USER /home/$APP_USER
+    Status_Check $?
+
   Print "Configure SystemD file"
     sed -i -e 's/MONGO_ENDPOINT/mongodb.roboshop.internal/' \
            -e 's/REDIS_ENDPOINT/redis.roboshop.internal/' \
@@ -82,19 +83,12 @@ NodeJS(){
   yum install nodejs gcc-c++ -y &>>$LOG_FILE
   Status_Check $?
 
-  Create_Application_User
-
   APP_SETUP
 
 
   Print "Installing Dependencies"
   cd /home/${APP_USER}/${COMPONENT} &>>$LOG_FILE && npm install &>>$LOG_FILE
   Status_Check $?
-
-  Print "Applying permissions to Application user"
-  chown -R $APP_USER:$APP_USER /home/$APP_USER
-  Status_Check $?
-
 
   Setup_SystemD_file
 
@@ -107,8 +101,6 @@ Maven()
 Print "Install Maven"
 yum install maven -y &>>$LOG_FILE
 Status_Check $?
-
-Create_Application_User
 
 APP_SETUP
 
