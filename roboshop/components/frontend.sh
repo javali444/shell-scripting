@@ -25,7 +25,7 @@ Status_Check $?
 
 Print "Configuration set up"
 mv localhost.conf /etc/nginx/default.d/roboshop.conf &>>$LOG_FILE
-for component_value in catalogue user cart; do
+for component_value in catalogue user cart shipping; do
   Print "Updating configuration file of ${component_value} -"
   sed -i -e "/${component_value}/s/localhost/${component_value}.roboshop.internal/" /etc/nginx/default.d/roboshop.conf &>>$LOG_FILE
   Status_Check $?
