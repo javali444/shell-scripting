@@ -42,6 +42,8 @@ Create_Application_User(){
 
 APP_SETUP(){
   Print "Downloading ${COMPONENT} component content"
+    cd /home/${APP_USER} &>>$LOG_FILE
+    Status_Check $?
     curl -s -L -o /tmp/${COMPONENT}.zip "https://github.com/roboshop-devops-project/${COMPONENT}/archive/main.zip" &>>$LOG_FILE
     Status_Check $?
 
@@ -50,7 +52,7 @@ APP_SETUP(){
     Status_Check $?
 
     Print "Unzipping the files"
-    cd /home/${APP_USER} &>>$LOG_FILE && unzip -o /tmp/${COMPONENT}.zip &>>$LOG_FILE && mv ${COMPONENT}-main ${COMPONENT} &>>$LOG_FILE
+    unzip -o /tmp/${COMPONENT}.zip &>>$LOG_FILE && mv ${COMPONENT}-main ${COMPONENT} &>>$LOG_FILE
     Status_Check $?
 }
 
