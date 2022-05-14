@@ -109,7 +109,7 @@ Status_Check $?
 APP_SETUP
 
 Print "Maven packaging"
-cd shipping &>>$LOG_FILE && mvn clean package &>>$LOG_FILE && mv target/shipping-1.0.jar shipping.jar &>>$LOG_FILE
+cd /home/${APP_USER}/${COMPONENT} &>>$LOG_FILE && mvn clean package &>>$LOG_FILE && mv target/shipping-1.0.jar shipping.jar &>>$LOG_FILE
 Status_Check $?
 
 Setup_SystemD_file
