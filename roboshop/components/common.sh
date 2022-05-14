@@ -30,6 +30,47 @@ rm -f $LOG_FILE
 
 APP_USER=roboshop
 
+Create_Application_User(){
+  id $APP_USER &>>$LOG_FILE
+    if [ $? -ne 0 ]; then
+      Print "Adding Application user"
+      useradd ${APP_USER} &>>$LOG_FILE
+      Status_Check $?
+    fi
+
+}
+
+APP_SETUP(){
+  Print "Downloading ${COMPONENT} component content"
+    curl -s -L -o /tmp/${COMPONENT}.zip "https://github.com/roboshop-devops-project/${COMPONENT}/archive/main.zip" &>>$LOG_FILE
+    Status_Check $?
+
+    Print "Clean up old contents"
+    rm -rf /home/${APP_USER}/${COMPONENT} &>>$LOG_FILE
+    Status_Check $?
+
+    Print "Unzipping the files"
+    cd /home/${APP_USER} &>>$LOG_FILE && unzip -o /tmp/${COMPONENT}.zip &>>$LOG_FILE && mv ${COMPONENT}-main ${COMPONENT} &>>$LOG_FILE
+    Status_Check $?
+}
+
+Setup_SystemD_file()
+{
+  Print "Configure SystemD file"
+    sed -i -e 's/MONGO_ENDPOINT/mongodb.roboshop.internal/' \
+           -e 's/REDIS_ENDPOINT/redis.roboshop.internal/' \
+           -e 's/CATALOGUE_ENDPOINT/catalogue.roboshop.internal/' \
+           -e 's/CARTENDPOINT/cart.roboshop.internal/' \
+           -e 's/DBHOST/mysql.roboshop.internal/' \
+           /home/roboshop/${COMPONENT}/systemd.service &>>$LOG_FILE && mv /home/roboshop/${COMPONENT}/systemd.service /etc/systemd/system/${COMPONENT}.service &>>$LOG_FILE
+    Status_Check $?
+
+     Print "Restart ${COMPONENT} service"
+      systemctl daemon-reload &>>$LOG_FILE && systemctl restart ${COMPONENT} &>>$LOG_FILE && systemctl enable ${COMPONENT} &>>$LOG_FILE
+      Status_Check $?
+
+}
+
 NodeJS(){
   Print "Downloading the Repos"
   curl -fsSL https://rpm.nodesource.com/setup_lts.x | bash - &>>$LOG_FILE
@@ -39,25 +80,9 @@ NodeJS(){
   yum install nodejs gcc-c++ -y &>>$LOG_FILE
   Status_Check $?
 
-  id $APP_USER &>>$LOG_FILE
-  if [ $? -ne 0 ]; then
-    Print "Adding Application user"
-    useradd ${APP_USER} &>>$LOG_FILE
-    Status_Check $?
-  fi
+  Create_Application_User
 
-
-  Print "Downloading ${COMPONENT} component content"
-  curl -s -L -o /tmp/${COMPONENT}.zip "https://github.com/roboshop-devops-project/${COMPONENT}/archive/main.zip" &>>$LOG_FILE
-  Status_Check $?
-
-  Print "Clean up old contents"
-  rm -rf /home/${APP_USER}/${COMPONENT} &>>$LOG_FILE
-  Status_Check $?
-
-  Print "Unzipping the files"
-  cd /home/${APP_USER} &>>$LOG_FILE && unzip -o /tmp/${COMPONENT}.zip &>>$LOG_FILE && mv ${COMPONENT}-main ${COMPONENT} &>>$LOG_FILE
-  Status_Check $?
+  APP_SETUP
 
 
   Print "Installing Dependencies"
@@ -68,13 +93,30 @@ NodeJS(){
   chown -R $APP_USER:$APP_USER /home/$APP_USER
   Status_Check $?
 
-  Print "Configure SystemD file with correct IP addresses"
-  sed -i -e 's/MONGO_ENDPOINT/mongodb.roboshop.internal/' /home/roboshop/${COMPONENT}/systemd.service &>>$LOG_FILE && sed -i -e 's/REDIS_ENDPOINT/redis.roboshop.internal/' -e 's/CATALOGUE_ENDPOINT/catalogue.roboshop.internal/' /home/roboshop/${COMPONENT}/systemd.service &>>$LOG_FILE && mv /home/roboshop/${COMPONENT}/systemd.service /etc/systemd/system/${COMPONENT}.service &>>$LOG_FILE
-  Status_Check $?
+
+  Setup_SystemD_file
 
 
-  Print "Restart ${COMPONENT} service"
-  systemctl daemon-reload &>>$LOG_FILE && systemctl restart ${COMPONENT} &>>$LOG_FILE && systemctl enable ${COMPONENT} &>>$LOG_FILE
-  Status_Check $?
+}
+
+Maven()
+{
+
+Print "Install Maven"
+yum install maven -y &>>$LOG_FILE
+Status_Check $?
+
+Create_Application_User
+
+APP_SETUP
+
+Print "Maven packaging"
+cd shipping &>>$LOG_FILE && mvn clean package &>>$LOG_FILE && mv target/shipping-1.0.jar shipping.jar &>>$LOG_FILE
+Status_Check $?
+
+Setup_SystemD_file
+
+
+
 
 }
