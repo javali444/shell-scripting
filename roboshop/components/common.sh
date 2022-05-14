@@ -27,30 +27,26 @@ Print()
 
 LOG_FILE=/tmp/roboshop.log
 rm -f $LOG_FILE
-
 APP_USER=roboshop
 
-
-APP_SETUP(){
-
-  id $APP_USER &>>$LOG_FILE
-      if [ $? -ne 0 ]; then
-        Print "Adding Application user"
-        useradd ${APP_USER} &>>$LOG_FILE
-        Status_Check $?
-      fi
-
-  Print "Downloading ${COMPONENT} component content"
-    curl -s -L -o /tmp/${COMPONENT}.zip "https://github.com/roboshop-devops-project/${COMPONENT}/archive/main.zip" &>>$LOG_FILE
+APP_SETUP() {
+  id ${APP_USER} &>>${LOG_FILE}
+  if [ $? -ne 0 ]; then
+    Print "Add Application User"
+    useradd ${APP_USER} &>>${LOG_FILE}
     Status_Check $?
+  fi
+  Print "Download App Component"
+  curl -f -s -L -o /tmp/${COMPONENT}.zip "https://github.com/roboshop-devops-project/${COMPONENT}/archive/main.zip" &>>${LOG_FILE}
+ Status_Check $?
 
-    Print "Clean up old contents"
-    rm -rf /home/${APP_USER}/${COMPONENT} &>>$LOG_FILE
-    Status_Check $?
+  Print "CleanUp Old Content"
+  rm -rf /home/${APP_USER}/${COMPONENT} &>>${LOG_FILE}
+  Status_Check $?
 
-    Print "Unzipping the files"
-    cd /home/${APP_USER}/ &>>$LOG_FILE && unzip -o /tmp/${COMPONENT}.zip &>>$LOG_FILE && mv ${COMPONENT}-main ${COMPONENT} &>>$LOG_FILE
-    Status_Check $?
+  Print "Extract App Content"
+  cd /home/${APP_USER} &>>${LOG_FILE} && unzip -o /tmp/${COMPONENT}.zip &>>${LOG_FILE} && mv ${COMPONENT}-main ${COMPONENT} &>>${LOG_FILE}
+  Status_Check $?
 }
 
 Setup_SystemD_file()
